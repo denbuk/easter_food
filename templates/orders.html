@@ -1,7 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+  @media print {
+    header, .no-print { display: none !important; }
+    body { background: white; }
+    .card { box-shadow: none; padding: 0; margin-bottom: 1rem; }
+    .print-title { display: block !important; }
+  }
+  .print-title { display: none; font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
+</style>
+
 <div class="card" style="margin-bottom:1.5rem;">
-  <h2>Nákupní seznam 🛒</h2>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+    <h2 style="margin:0;">Nákupní seznam 🛒</h2>
+    {% if aggregated %}
+    <button onclick="window.print()" class="btn btn-sm no-print" style="background:#f0e0d0;color:#c05a1f;">🖨 Vytisknout</button>
+    {% endif %}
+  </div>
+  <div class="print-title">Velikonoční nákupní seznam</div>
   {% if aggregated %}
   <table style="width:100%;border-collapse:collapse;">
     <thead>
@@ -42,10 +58,17 @@
 </div>
 {% endif %}
 
-<div class="card">
+<div class="card no-print">
   <h2 style="color:#999;font-size:1rem;">Admin</h2>
   <form method="POST" action="/clear" onsubmit="return confirm('Smazat VŠECHNY objednávky? Tuto akci nelze vrátit.');">
-    <button type="submit" class="btn btn-danger btn-sm">Smazat vše</button>
+    <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+      <input type="password" name="pin" placeholder="PIN" maxlength="10"
+             style="width:90px;padding:0.4rem 0.6rem;border:1.5px solid {% if request.args.get('pin_error') %}#e84040{% else %}#ddd{% endif %};border-radius:8px;font-size:1rem;">
+      <button type="submit" class="btn btn-danger btn-sm">Smazat vše</button>
+    </div>
+    {% if request.args.get('pin_error') %}
+    <p style="color:#e84040;font-size:0.85rem;margin-top:0.4rem;">Nesprávný PIN.</p>
+    {% endif %}
   </form>
 </div>
 {% endblock %}

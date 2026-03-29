@@ -2,9 +2,19 @@
 {% block content %}
 <div class="card">
   <h2>Upravit objednávku pro {{ name }}</h2>
+
+  {% if request.args.get('duplicate') %}
+  <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:0.75rem 1rem;margin-bottom:1.25rem;color:#856404;">
+    Objednávka pro <strong>{{ name }}</strong> už existuje. Uprav ji níže.
+  </div>
+  {% endif %}
+
   {% if not rows %}
   <p style="color:#999;margin-bottom:1.25rem;">Pro toto jméno nebyla nalezena žádná objednávka. Můžeš přidat položky níže.</p>
   {% endif %}
+
+  <datalist id="item-suggestions"></datalist>
+
   <form method="POST" action="/edit/{{ name }}">
     <div id="items-container">
       {% if rows %}
@@ -12,9 +22,9 @@
         <div class="item-row" style="margin-bottom:1rem;">
           {% if loop.first %}<label>Položka</label>{% endif %}
           <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-            <input type="text" name="item[]" value="{{ row.item }}" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+            <input type="text" name="item[]" list="item-suggestions" value="{{ row.item }}" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
             <input type="number" name="quantity[]" value="{{ row.quantity }}" min="1" style="width:70px;margin-bottom:0.4rem;">
-            <input type="text" name="note[]" value="{{ row.note or '' }}" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+            <input type="text" name="note[]" value="{{ row.note or '' }}" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
             <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>
           </div>
         </div>
@@ -23,9 +33,9 @@
         <div class="item-row" style="margin-bottom:1rem;">
           <label>Položka</label>
           <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-            <input type="text" name="item[]" placeholder="např. Čokoládová vajíčka" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+            <input type="text" name="item[]" list="item-suggestions" placeholder="např. Čokoládová vajíčka" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
             <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
-            <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+            <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
           </div>
         </div>
       {% endif %}
@@ -42,6 +52,15 @@
 </div>
 
 <script>
+  fetch('/api/items').then(r => r.json()).then(items => {
+    const dl = document.getElementById('item-suggestions');
+    items.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      dl.appendChild(opt);
+    });
+  });
+
   const container = document.getElementById('items-container');
 
   document.querySelectorAll('.remove-row').forEach(btn => {
@@ -54,9 +73,9 @@
     row.style.marginBottom = '1rem';
     row.innerHTML = `
       <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-        <input type="text" name="item[]" placeholder="např. Mazanec" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+        <input type="text" name="item[]" list="item-suggestions" placeholder="např. Mazanec" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
         <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
-        <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+        <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
         <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>
       </div>
     `;

@@ -1,6 +1,6 @@
 import os
 import unicodedata
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from sqlalchemy import create_engine, text
 from collections import defaultdict
 
@@ -14,6 +14,7 @@ def normalize(name):
 app = Flask(__name__)
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///orders.db")
+ADMIN_PIN = os.environ.get("ADMIN_PIN", "1111")
 # Render supplies postgres:// but SQLAlchemy requires postgresql://
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
@@ -45,6 +46,13 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/api/items")
+def api_items():
+    with engine.connect() as conn:
+        rows = conn.execute(text("SELECT DISTINCT item FROM orders ORDER BY item")).fetchall()
+    return jsonify([r[0] for r in rows])
+
+
 @app.route("/submit", methods=["POST"])
 def submit():
     name = request.form.get("name", "").strip()
@@ -54,6 +62,14 @@ def submit():
 
     if not name:
         return redirect(url_for("index"))
+
+    # Redirect to edit if name already has orders
+    with engine.connect() as conn:
+        existing = conn.execute(
+            text("SELECT 1 FROM orders WHERE name = :name LIMIT 1"), {"name": name}
+        ).fetchone()
+    if existing:
+        return redirect(url_for("edit_order", name=name, duplicate=1))
 
     with engine.connect() as conn:
         for item, qty, note in zip(items, quantities, notes):
@@ -143,6 +159,8 @@ def edit_order(name):
 
 @app.route("/clear", methods=["POST"])
 def clear():
+    if request.form.get("pin") != ADMIN_PIN:
+        return redirect(url_for("orders", pin_error=1))
     with engine.connect() as conn:
         conn.execute(text("DELETE FROM orders"))
         conn.commit()

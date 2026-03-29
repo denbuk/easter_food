@@ -6,11 +6,13 @@
     <label for="name">Tvoje jméno</label>
     <input type="text" id="name" name="name" placeholder="např. Anna" required autofocus>
 
+    <datalist id="item-suggestions"></datalist>
+
     <div id="items-container">
       <div class="item-row" style="margin-bottom:1rem;">
         <label>Položka</label>
         <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-          <input type="text" name="item[]" placeholder="např. Čokoládová vajíčka" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+          <input type="text" name="item[]" list="item-suggestions" placeholder="např. Čokoládová vajíčka" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
           <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
           <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
         </div>
@@ -27,6 +29,16 @@
 </div>
 
 <script>
+  // Load existing item names for autocomplete
+  fetch('/api/items').then(r => r.json()).then(items => {
+    const dl = document.getElementById('item-suggestions');
+    items.forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      dl.appendChild(opt);
+    });
+  });
+
   const container = document.getElementById('items-container');
   document.getElementById('add-item').addEventListener('click', () => {
     const row = document.createElement('div');
@@ -34,9 +46,9 @@
     row.style.marginBottom = '1rem';
     row.innerHTML = `
       <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-        <input type="text" name="item[]" placeholder="např. Mazanec" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+        <input type="text" name="item[]" list="item-suggestions" placeholder="např. Mazanec" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
         <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
-        <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+        <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
         <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>
       </div>
     `;
