@@ -157,6 +157,11 @@ def edit_order(name):
     return render_template("edit_order.html", name=name, rows=rows)
 
 
+@app.route("/health")
+def health():
+    return "", 204
+
+
 @app.route("/export")
 def export():
     with engine.connect() as conn:
