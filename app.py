@@ -14,6 +14,7 @@ engine = create_engine(DATABASE_URL)
 
 
 def init_db():
+
     with engine.connect() as conn:
         conn.execute(text("""
             CREATE TABLE IF NOT EXISTS orders (
@@ -25,6 +26,10 @@ def init_db():
             )
         """))
         conn.commit()
+
+
+# Run at startup so tables exist whether launched via gunicorn or directly
+init_db()
 
 
 @app.route("/")
