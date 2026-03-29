@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>What do you want to eat? 🥗</h2>
+  <form method="POST" action="/submit" id="order-form">
+    <label for="name">Your name</label>
+    <input type="text" id="name" name="name" placeholder="e.g. Anna" required autofocus>
+
+    <div id="items-container">
+      <div class="item-row" style="margin-bottom:1rem;">
+        <label>Food item</label>
+        <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
+          <input type="text" name="item[]" placeholder="e.g. Chocolate eggs" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+          <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
+          <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+        </div>
+      </div>
+    </div>
+
+    <button type="button" id="add-item" class="btn btn-sm" style="background:#f0e0d0;color:#c05a1f;margin-bottom:1.25rem;">
+      + Add another item
+    </button>
+
+    <br>
+    <button type="submit" class="btn btn-primary">Submit my order</button>
+  </form>
+</div>
+
+<script>
+  const container = document.getElementById('items-container');
+  document.getElementById('add-item').addEventListener('click', () => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    row.style.marginBottom = '1rem';
+    row.innerHTML = `
+      <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
+        <input type="text" name="item[]" placeholder="e.g. Hot cross buns" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+        <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
+        <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+        <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>
+      </div>
+    `;
+    container.appendChild(row);
+    row.querySelector('.remove-row').addEventListener('click', () => row.remove());
+    row.querySelector('input[name="item[]"]').focus();
+  });
+</script>
+{% endblock %}
