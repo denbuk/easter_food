@@ -1,38 +1,30 @@
-import sqlite3
-from flask import Flask, render_template, request, redirect, url_for, g
+import os
+from flask import Flask, render_template, request, redirect, url_for
+from sqlalchemy import create_engine, text
 from collections import defaultdict
 
 app = Flask(__name__)
-DATABASE = "orders.db"
 
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///orders.db")
+# Render supplies postgres:// but SQLAlchemy requires postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-def get_db():
-    if "db" not in g:
-        g.db = sqlite3.connect(DATABASE)
-        g.db.row_factory = sqlite3.Row
-    return g.db
-
-
-@app.teardown_appcontext
-def close_db(e=None):
-    db = g.pop("db", None)
-    if db is not None:
-        db.close()
+engine = create_engine(DATABASE_URL)
 
 
 def init_db():
-    db = sqlite3.connect(DATABASE)
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS orders (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            item TEXT NOT NULL,
-            quantity INTEGER NOT NULL DEFAULT 1,
-            note TEXT
-        )
-    """)
-    db.commit()
-    db.close()
+    with engine.connect() as conn:
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS orders (
+                id SERIAL PRIMARY KEY,
+                name TEXT NOT NULL,
+                item TEXT NOT NULL,
+                quantity INTEGER NOT NULL DEFAULT 1,
+                note TEXT
+            )
+        """))
+        conn.commit()
 
 
 @app.route("/")
@@ -50,29 +42,31 @@ def submit():
     if not name:
         return redirect(url_for("index"))
 
-    db = get_db()
-    for item, qty, note in zip(items, quantities, notes):
-        item = item.strip()
-        if not item:
-            continue
-        try:
-            qty = max(1, int(qty))
-        except (ValueError, TypeError):
-            qty = 1
-        db.execute(
-            "INSERT INTO orders (name, item, quantity, note) VALUES (?, ?, ?, ?)",
-            (name, item, qty, note.strip()),
-        )
-    db.commit()
+    with engine.connect() as conn:
+        for item, qty, note in zip(items, quantities, notes):
+            item = item.strip()
+            if not item:
+                continue
+            try:
+                qty = max(1, int(qty))
+            except (ValueError, TypeError):
+                qty = 1
+            conn.execute(
+                text("INSERT INTO orders (name, item, quantity, note) VALUES (:name, :item, :qty, :note)"),
+                {"name": name, "item": item, "qty": qty, "note": note.strip()},
+            )
+        conn.commit()
+
     return render_template("thanks.html", name=name)
 
 
 @app.route("/orders")
 def orders():
-    db = get_db()
-    rows = db.execute("SELECT * FROM orders ORDER BY item, name").fetchall()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text("SELECT * FROM orders ORDER BY item, name")
+        ).mappings().all()
 
-    # Aggregate by item
     aggregated = defaultdict(lambda: {"total": 0, "people": []})
     for row in rows:
         key = row["item"]
@@ -82,7 +76,6 @@ def orders():
             entry += f" ({row['note']})"
         aggregated[key]["people"].append(entry)
 
-    # Also collect per-person view
     by_person = defaultdict(list)
     for row in rows:
         by_person[row["name"]].append(row)
@@ -92,12 +85,12 @@ def orders():
 
 @app.route("/clear", methods=["POST"])
 def clear():
-    db = get_db()
-    db.execute("DELETE FROM orders")
-    db.commit()
+    with engine.connect() as conn:
+        conn.execute(text("DELETE FROM orders"))
+        conn.commit()
     return redirect(url_for("orders"))
 
 
 if __name__ == "__main__":
     init_db()
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=False)

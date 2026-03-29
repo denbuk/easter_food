@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: easter-food-order
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python -c "from app import init_db; init_db()"
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: easter-food-db
+          property: connectionString
+
+databases:
+  - name: easter-food-db
+    databaseName: easter_food
+    plan: free
