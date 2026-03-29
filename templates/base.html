@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,73 +12,123 @@
       color: #333;
       min-height: 100vh;
     }
+
+    /* ── Header ── */
     header {
       background: #e87c3e;
       color: white;
-      padding: 1rem 2rem;
+      padding: 0.85rem 1.25rem;
       display: flex;
       align-items: center;
-      gap: 1rem;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
-    header h1 { font-size: 1.4rem; }
+    .header-brand { display: flex; align-items: center; gap: 0.6rem; }
+    header h1 { font-size: 1.2rem; }
+    header nav { display: flex; gap: 0.25rem; flex-wrap: wrap; }
     header nav a {
       color: white;
       text-decoration: none;
-      margin-left: 1.5rem;
-      font-size: 0.9rem;
-      opacity: 0.85;
+      font-size: 0.85rem;
+      opacity: 0.9;
+      padding: 0.4rem 0.7rem;
+      border-radius: 6px;
+      transition: background 0.15s;
     }
-    header nav a:hover { opacity: 1; }
+    header nav a:hover, header nav a.active { background: rgba(0,0,0,0.15); opacity: 1; }
+
+    /* ── Layout ── */
     main {
       max-width: 700px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      margin: 1.5rem auto;
+      padding: 0 0.75rem;
     }
     .card {
       background: white;
       border-radius: 12px;
-      padding: 2rem;
+      padding: 1.5rem;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
-    h2 { margin-bottom: 1.25rem; color: #c05a1f; }
+    h2 { margin-bottom: 1.1rem; color: #c05a1f; font-size: 1.2rem; }
+
+    /* ── Buttons ── */
     .btn {
       display: inline-block;
-      padding: 0.6rem 1.4rem;
+      padding: 0.65rem 1.4rem;
       border-radius: 8px;
       border: none;
       cursor: pointer;
       font-size: 1rem;
       font-weight: 600;
       transition: background 0.15s;
+      touch-action: manipulation;
     }
     .btn-primary { background: #e87c3e; color: white; }
     .btn-primary:hover { background: #c05a1f; }
     .btn-danger { background: #e84040; color: white; }
     .btn-danger:hover { background: #b02020; }
-    .btn-sm { padding: 0.35rem 0.9rem; font-size: 0.85rem; }
+    .btn-sm { padding: 0.45rem 0.9rem; font-size: 0.9rem; }
+
+    /* ── Forms ── */
     label { display: block; font-weight: 600; margin-bottom: 0.3rem; }
-    input[type=text], input[type=number] {
+    input[type=text], input[type=number], input[type=password] {
       width: 100%;
-      padding: 0.55rem 0.75rem;
+      padding: 0.65rem 0.85rem;
       border: 1.5px solid #ddd;
       border-radius: 8px;
-      font-size: 1rem;
+      font-size: 1rem;        /* prevents iOS zoom on focus */
       margin-bottom: 1rem;
     }
-    input[type=text]:focus, input[type=number]:focus {
+    input[type=text]:focus, input[type=number]:focus, input[type=password]:focus {
       outline: none;
       border-color: #e87c3e;
     }
+
+    /* ── Item rows (form) ── */
+    .item-row-inner {
+      display: grid;
+      grid-template-columns: 1fr 60px;
+      gap: 0.5rem;
+      align-items: start;
+    }
+    .item-row-inner .note-remove {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .item-row-inner .note-remove input { flex: 1; margin-bottom: 0; }
+
+    /* ── Orders table ── */
+    .orders-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; min-width: 340px; }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.1rem; }
+      .btn { width: 100%; text-align: center; margin-bottom: 0.4rem; }
+      .btn-sm { width: auto; margin-bottom: 0; }
+      .btn + .btn, a.btn + .btn, .btn + a { margin-top: 0; }
+    }
+
+    @media print {
+      header, .no-print { display: none !important; }
+      body { background: white; }
+      .card { box-shadow: none; padding: 0; margin-bottom: 1rem; }
+      .print-title { display: block !important; }
+    }
+    .print-title { display: none; font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
   </style>
 </head>
 <body>
   <header>
-    <span style="font-size:1.8rem">🐣</span>
-    <h1>Velikonoční objednávky</h1>
+    <div class="header-brand">
+      <span style="font-size:1.6rem">🐣</span>
+      <h1>Velikonoční objednávky</h1>
+    </div>
     <nav>
-      <a href="/">Přidat objednávku</a>
-      <a href="/edit">Upravit objednávku</a>
-      <a href="/orders">Zobrazit vše</a>
+      <a href="/">Přidat</a>
+      <a href="/edit">Upravit</a>
+      <a href="/orders">Seznam</a>
     </nav>
   </header>
   <main>

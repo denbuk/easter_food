@@ -21,21 +21,25 @@
         {% for row in rows %}
         <div class="item-row" style="margin-bottom:1rem;">
           {% if loop.first %}<label>Položka</label>{% endif %}
-          <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-            <input type="text" name="item[]" list="item-suggestions" value="{{ row.item }}" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
-            <input type="number" name="quantity[]" value="{{ row.quantity }}" min="1" style="width:70px;margin-bottom:0.4rem;">
-            <input type="text" name="note[]" value="{{ row.note or '' }}" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
-            <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>
+          <div class="item-row-inner">
+            <input type="text" name="item[]" list="item-suggestions" value="{{ row.item }}" required style="margin-bottom:0;">
+            <input type="number" name="quantity[]" value="{{ row.quantity }}" min="1" style="margin-bottom:0;">
+            <div class="note-remove">
+              <input type="text" name="note[]" value="{{ row.note or '' }}" placeholder="Poznámka (nepovinné)">
+              <button type="button" class="btn btn-sm btn-danger remove-row">✕</button>
+            </div>
           </div>
         </div>
         {% endfor %}
       {% else %}
         <div class="item-row" style="margin-bottom:1rem;">
           <label>Položka</label>
-          <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-            <input type="text" name="item[]" list="item-suggestions" placeholder="např. Čokoládová vajíčka" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
-            <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
-            <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+          <div class="item-row-inner">
+            <input type="text" name="item[]" list="item-suggestions" placeholder="např. Čokoládová vajíčka" required style="margin-bottom:0;">
+            <input type="number" name="quantity[]" value="1" min="1" style="margin-bottom:0;">
+            <div class="note-remove">
+              <input type="text" name="note[]" placeholder="Poznámka (nepovinné)">
+            </div>
           </div>
         </div>
       {% endif %}
@@ -47,7 +51,7 @@
 
     <br>
     <button type="submit" class="btn btn-primary">Uložit změny</button>
-    <a href="/" style="margin-left:1rem;color:#999;font-size:0.9rem;">Zrušit</a>
+    <a href="/" style="display:inline-block;margin-top:0.5rem;color:#999;font-size:0.9rem;">Zrušit</a>
   </form>
 </div>
 
@@ -72,11 +76,13 @@
     row.className = 'item-row';
     row.style.marginBottom = '1rem';
     row.innerHTML = `
-      <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-        <input type="text" name="item[]" list="item-suggestions" placeholder="např. Mazanec" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
-        <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
-        <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
-        <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>
+      <div class="item-row-inner">
+        <input type="text" name="item[]" list="item-suggestions" placeholder="např. Mazanec" style="margin-bottom:0;">
+        <input type="number" name="quantity[]" value="1" min="1" style="margin-bottom:0;">
+        <div class="note-remove">
+          <input type="text" name="note[]" placeholder="Poznámka (nepovinné)">
+          <button type="button" class="btn btn-sm btn-danger remove-row">✕</button>
+        </div>
       </div>
     `;
     container.appendChild(row);
