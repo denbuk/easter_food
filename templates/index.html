@@ -11,15 +11,17 @@
     <div id="items-container">
       <div class="item-row" style="margin-bottom:1rem;">
         <label>Položka</label>
-        <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-          <input type="text" name="item[]" list="item-suggestions" placeholder="např. Čokoládová vajíčka" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
-          <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
-          <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+        <div class="item-row-inner">
+          <input type="text" name="item[]" list="item-suggestions" placeholder="např. Čokoládová vajíčka" required style="margin-bottom:0;">
+          <input type="number" name="quantity[]" value="1" min="1" style="margin-bottom:0;">
+          <div class="note-remove">
+            <input type="text" name="note[]" placeholder="Poznámka (nepovinné)">
+          </div>
         </div>
       </div>
     </div>
 
-    <button type="button" id="add-item" class="btn btn-sm" style="background:#f0e0d0;color:#c05a1f;margin-bottom:1.25rem;">
+    <button type="button" id="add-item" class="btn btn-sm no-print" style="background:#f0e0d0;color:#c05a1f;margin-bottom:1.25rem;">
       + Přidat další položku
     </button>
 
@@ -29,7 +31,6 @@
 </div>
 
 <script>
-  // Load existing item names for autocomplete
   fetch('/api/items').then(r => r.json()).then(items => {
     const dl = document.getElementById('item-suggestions');
     items.forEach(name => {
@@ -45,11 +46,13 @@
     row.className = 'item-row';
     row.style.marginBottom = '1rem';
     row.innerHTML = `
-      <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-        <input type="text" name="item[]" list="item-suggestions" placeholder="např. Mazanec" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
-        <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
-        <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
-        <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>
+      <div class="item-row-inner">
+        <input type="text" name="item[]" list="item-suggestions" placeholder="např. Mazanec" style="margin-bottom:0;">
+        <input type="number" name="quantity[]" value="1" min="1" style="margin-bottom:0;">
+        <div class="note-remove">
+          <input type="text" name="note[]" placeholder="Poznámka (nepovinné)">
+          <button type="button" class="btn btn-sm btn-danger remove-row">✕</button>
+        </div>
       </div>
     `;
     container.appendChild(row);

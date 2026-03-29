@@ -19,7 +19,8 @@
   </div>
   <div class="print-title">Velikonoční nákupní seznam</div>
   {% if aggregated %}
-  <table style="width:100%;border-collapse:collapse;">
+  <div class="orders-table-wrap">
+  <table>
     <thead>
       <tr style="border-bottom:2px solid #f0e0d0;text-align:left;">
         <th style="padding:0.5rem 0.75rem;">Položka</th>
@@ -37,6 +38,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
   {% else %}
   <p style="color:#999;text-align:center;padding:2rem 0;">Zatím žádné objednávky. Pošli odkaz kolegům!</p>
   {% endif %}
