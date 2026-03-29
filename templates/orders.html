@@ -61,7 +61,14 @@
 <div class="card no-print">
   <h2 style="color:#999;font-size:1rem;">Admin</h2>
   <form method="POST" action="/clear" onsubmit="return confirm('Smazat VŠECHNY objednávky? Tuto akci nelze vrátit.');">
-    <button type="submit" class="btn btn-danger btn-sm">Smazat vše</button>
+    <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+      <input type="password" name="pin" placeholder="PIN" maxlength="10"
+             style="width:90px;padding:0.4rem 0.6rem;border:1.5px solid {% if request.args.get('pin_error') %}#e84040{% else %}#ddd{% endif %};border-radius:8px;font-size:1rem;">
+      <button type="submit" class="btn btn-danger btn-sm">Smazat vše</button>
+    </div>
+    {% if request.args.get('pin_error') %}
+    <p style="color:#e84040;font-size:0.85rem;margin-top:0.4rem;">Nesprávný PIN.</p>
+    {% endif %}
   </form>
 </div>
 {% endblock %}

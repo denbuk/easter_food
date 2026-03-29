@@ -14,6 +14,7 @@ def normalize(name):
 app = Flask(__name__)
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///orders.db")
+ADMIN_PIN = os.environ.get("ADMIN_PIN", "1111")
 # Render supplies postgres:// but SQLAlchemy requires postgresql://
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
@@ -158,6 +159,8 @@ def edit_order(name):
 
 @app.route("/clear", methods=["POST"])
 def clear():
+    if request.form.get("pin") != ADMIN_PIN:
+        return redirect(url_for("orders", pin_error=1))
     with engine.connect() as conn:
         conn.execute(text("DELETE FROM orders"))
         conn.commit()
