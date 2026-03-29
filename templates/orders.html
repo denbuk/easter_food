@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="margin-bottom:1.5rem;">
+  <h2>Shopping list 🛒</h2>
+  {% if aggregated %}
+  <table style="width:100%;border-collapse:collapse;">
+    <thead>
+      <tr style="border-bottom:2px solid #f0e0d0;text-align:left;">
+        <th style="padding:0.5rem 0.75rem;">Item</th>
+        <th style="padding:0.5rem 0.75rem;width:70px;text-align:center;">Total</th>
+        <th style="padding:0.5rem 0.75rem;color:#888;font-weight:normal;">Who ordered</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item, data in aggregated|dictsort %}
+      <tr style="border-bottom:1px solid #f5ede0;">
+        <td style="padding:0.6rem 0.75rem;font-weight:600;">{{ item }}</td>
+        <td style="padding:0.6rem 0.75rem;text-align:center;font-size:1.1rem;font-weight:700;color:#e87c3e;">{{ data.total }}</td>
+        <td style="padding:0.6rem 0.75rem;color:#666;font-size:0.9rem;">{{ data.people | join(", ") }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p style="color:#999;text-align:center;padding:2rem 0;">No orders yet. Share the link so your team can submit!</p>
+  {% endif %}
+</div>
+
+{% if by_person %}
+<div class="card" style="margin-bottom:1.5rem;">
+  <h2>By person</h2>
+  {% for person, rows in by_person.items() %}
+  <div style="margin-bottom:1rem;">
+    <strong style="color:#c05a1f;">{{ person }}</strong>
+    <ul style="margin:0.3rem 0 0 1.2rem;color:#555;">
+      {% for row in rows %}
+      <li>{{ row['item'] }} ×{{ row['quantity'] }}{% if row['note'] %} <em style="color:#999;">({{ row['note'] }})</em>{% endif %}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="card">
+  <h2 style="color:#999;font-size:1rem;">Admin</h2>
+  <form method="POST" action="/clear" onsubmit="return confirm('Clear ALL orders? This cannot be undone.');">
+    <button type="submit" class="btn btn-danger btn-sm">Clear all orders</button>
+  </form>
+</div>
+{% endblock %}
