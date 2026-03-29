@@ -88,6 +88,49 @@ def orders():
     return render_template("orders.html", aggregated=aggregated, by_person=by_person)
 
 
+@app.route("/edit", methods=["GET", "POST"])
+def edit_lookup():
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        if name:
+            return redirect(url_for("edit_order", name=name))
+    return render_template("edit_lookup.html")
+
+
+@app.route("/edit/<name>", methods=["GET", "POST"])
+def edit_order(name):
+    if request.method == "POST":
+        items = request.form.getlist("item[]")
+        quantities = request.form.getlist("quantity[]")
+        notes = request.form.getlist("note[]")
+
+        with engine.connect() as conn:
+            conn.execute(text("DELETE FROM orders WHERE name = :name"), {"name": name})
+            for item, qty, note in zip(items, quantities, notes):
+                item = item.strip()
+                if not item:
+                    continue
+                try:
+                    qty = max(1, int(qty))
+                except (ValueError, TypeError):
+                    qty = 1
+                conn.execute(
+                    text("INSERT INTO orders (name, item, quantity, note) VALUES (:name, :item, :qty, :note)"),
+                    {"name": name, "item": item, "qty": qty, "note": note.strip()},
+                )
+            conn.commit()
+
+        return render_template("thanks.html", name=name)
+
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text("SELECT * FROM orders WHERE name = :name ORDER BY id"),
+            {"name": name},
+        ).mappings().all()
+
+    return render_template("edit_order.html", name=name, rows=rows)
+
+
 @app.route("/clear", methods=["POST"])
 def clear():
     with engine.connect() as conn:

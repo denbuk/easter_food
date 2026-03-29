@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Change your order</h2>
+  <p style="color:#666;margin-bottom:1.25rem;">Enter your name to load your existing order.</p>
+  <form method="POST" action="/edit">
+    <label for="name">Your name</label>
+    <input type="text" id="name" name="name" placeholder="e.g. Anna" required autofocus>
+    <button type="submit" class="btn btn-primary">Load my order</button>
+  </form>
+</div>
+{% endblock %}
