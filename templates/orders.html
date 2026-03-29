@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="card" style="margin-bottom:1.5rem;">
-  <h2>Shopping list 🛒</h2>
+  <h2>Nákupní seznam 🛒</h2>
   {% if aggregated %}
   <table style="width:100%;border-collapse:collapse;">
     <thead>
       <tr style="border-bottom:2px solid #f0e0d0;text-align:left;">
-        <th style="padding:0.5rem 0.75rem;">Item</th>
-        <th style="padding:0.5rem 0.75rem;width:70px;text-align:center;">Total</th>
-        <th style="padding:0.5rem 0.75rem;color:#888;font-weight:normal;">Who ordered</th>
+        <th style="padding:0.5rem 0.75rem;">Položka</th>
+        <th style="padding:0.5rem 0.75rem;width:70px;text-align:center;">Celkem</th>
+        <th style="padding:0.5rem 0.75rem;color:#888;font-weight:normal;">Kdo objednal</th>
       </tr>
     </thead>
     <tbody>
@@ -22,13 +22,13 @@
     </tbody>
   </table>
   {% else %}
-  <p style="color:#999;text-align:center;padding:2rem 0;">No orders yet. Share the link so your team can submit!</p>
+  <p style="color:#999;text-align:center;padding:2rem 0;">Zatím žádné objednávky. Pošli odkaz kolegům!</p>
   {% endif %}
 </div>
 
 {% if by_person %}
 <div class="card" style="margin-bottom:1.5rem;">
-  <h2>By person</h2>
+  <h2>Podle osoby</h2>
   {% for person, rows in by_person.items() %}
   <div style="margin-bottom:1rem;">
     <strong style="color:#c05a1f;">{{ person }}</strong>
@@ -44,8 +44,8 @@
 
 <div class="card">
   <h2 style="color:#999;font-size:1rem;">Admin</h2>
-  <form method="POST" action="/clear" onsubmit="return confirm('Clear ALL orders? This cannot be undone.');">
-    <button type="submit" class="btn btn-danger btn-sm">Clear all orders</button>
+  <form method="POST" action="/clear" onsubmit="return confirm('Smazat VŠECHNY objednávky? Tuto akci nelze vrátit.');">
+    <button type="submit" class="btn btn-danger btn-sm">Smazat vše</button>
   </form>
 </div>
 {% endblock %}
