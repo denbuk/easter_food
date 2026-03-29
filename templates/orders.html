@@ -14,7 +14,7 @@
     <tbody>
       {% for item, data in aggregated|dictsort %}
       <tr style="border-bottom:1px solid #f5ede0;">
-        <td style="padding:0.6rem 0.75rem;font-weight:600;">{{ item }}</td>
+        <td style="padding:0.6rem 0.75rem;font-weight:600;">{{ data.display }}</td>
         <td style="padding:0.6rem 0.75rem;text-align:center;font-size:1.1rem;font-weight:700;color:#e87c3e;">{{ data.total }}</td>
         <td style="padding:0.6rem 0.75rem;color:#666;font-size:0.9rem;">{{ data.people | join(", ") }}</td>
       </tr>
