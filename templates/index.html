@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="card">
-  <h2>What do you want to eat? 🥗</h2>
+  <h2>Co chceš k jídlu? 🥗</h2>
   <form method="POST" action="/submit" id="order-form">
-    <label for="name">Your name</label>
-    <input type="text" id="name" name="name" placeholder="e.g. Anna" required autofocus>
+    <label for="name">Tvoje jméno</label>
+    <input type="text" id="name" name="name" placeholder="např. Anna" required autofocus>
 
     <div id="items-container">
       <div class="item-row" style="margin-bottom:1rem;">
-        <label>Food item</label>
+        <label>Položka</label>
         <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-          <input type="text" name="item[]" placeholder="e.g. Chocolate eggs" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+          <input type="text" name="item[]" placeholder="např. Čokoládová vajíčka" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
           <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
-          <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
+          <input type="text" name="note[]" placeholder="Poznámka (nepovinné)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
         </div>
       </div>
     </div>
 
     <button type="button" id="add-item" class="btn btn-sm" style="background:#f0e0d0;color:#c05a1f;margin-bottom:1.25rem;">
-      + Add another item
+      + Přidat další položku
     </button>
 
     <br>
-    <button type="submit" class="btn btn-primary">Submit my order</button>
+    <button type="submit" class="btn btn-primary">Odeslat objednávku</button>
   </form>
 </div>
 
@@ -34,7 +34,7 @@
     row.style.marginBottom = '1rem';
     row.innerHTML = `
       <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-        <input type="text" name="item[]" placeholder="e.g. Hot cross buns" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+        <input type="text" name="item[]" placeholder="např. Mazanec" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
         <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
         <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
         <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>

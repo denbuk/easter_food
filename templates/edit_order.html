@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="card">
-  <h2>Edit order for {{ name }}</h2>
+  <h2>Upravit objednávku pro {{ name }}</h2>
   {% if not rows %}
-  <p style="color:#999;margin-bottom:1.25rem;">No existing order found for this name. You can add items below.</p>
+  <p style="color:#999;margin-bottom:1.25rem;">Pro toto jméno nebyla nalezena žádná objednávka. Můžeš přidat položky níže.</p>
   {% endif %}
   <form method="POST" action="/edit/{{ name }}">
     <div id="items-container">
       {% if rows %}
         {% for row in rows %}
         <div class="item-row" style="margin-bottom:1rem;">
-          {% if loop.first %}<label>Food item</label>{% endif %}
+          {% if loop.first %}<label>Položka</label>{% endif %}
           <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
             <input type="text" name="item[]" value="{{ row.item }}" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
             <input type="number" name="quantity[]" value="{{ row.quantity }}" min="1" style="width:70px;margin-bottom:0.4rem;">
@@ -21,9 +21,9 @@
         {% endfor %}
       {% else %}
         <div class="item-row" style="margin-bottom:1rem;">
-          <label>Food item</label>
+          <label>Položka</label>
           <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-            <input type="text" name="item[]" placeholder="e.g. Chocolate eggs" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+            <input type="text" name="item[]" placeholder="např. Čokoládová vajíčka" required style="flex:2;min-width:150px;margin-bottom:0.4rem;">
             <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
             <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
           </div>
@@ -32,12 +32,12 @@
     </div>
 
     <button type="button" id="add-item" class="btn btn-sm" style="background:#f0e0d0;color:#c05a1f;margin-bottom:1.25rem;">
-      + Add another item
+      + Přidat další položku
     </button>
 
     <br>
-    <button type="submit" class="btn btn-primary">Save changes</button>
-    <a href="/" style="margin-left:1rem;color:#999;font-size:0.9rem;">Cancel</a>
+    <button type="submit" class="btn btn-primary">Uložit změny</button>
+    <a href="/" style="margin-left:1rem;color:#999;font-size:0.9rem;">Zrušit</a>
   </form>
 </div>
 
@@ -54,7 +54,7 @@
     row.style.marginBottom = '1rem';
     row.innerHTML = `
       <div style="display:flex;gap:0.5rem;align-items:flex-start;flex-wrap:wrap;">
-        <input type="text" name="item[]" placeholder="e.g. Hot cross buns" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
+        <input type="text" name="item[]" placeholder="např. Mazanec" style="flex:2;min-width:150px;margin-bottom:0.4rem;">
         <input type="number" name="quantity[]" value="1" min="1" style="width:70px;margin-bottom:0.4rem;">
         <input type="text" name="note[]" placeholder="Note (optional)" style="flex:2;min-width:120px;margin-bottom:0.4rem;">
         <button type="button" class="btn btn-sm btn-danger remove-row" style="margin-bottom:0.4rem;">✕</button>

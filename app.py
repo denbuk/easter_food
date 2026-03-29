@@ -1,7 +1,15 @@
 import os
+import unicodedata
 from flask import Flask, render_template, request, redirect, url_for
 from sqlalchemy import create_engine, text
 from collections import defaultdict
+
+
+def normalize(name):
+    """Lowercase + strip diacritics + collapse whitespace for grouping."""
+    nfkd = unicodedata.normalize("NFKD", name)
+    ascii_name = "".join(c for c in nfkd if not unicodedata.combining(c))
+    return " ".join(ascii_name.lower().split())
 
 app = Flask(__name__)
 
@@ -72,9 +80,11 @@ def orders():
             text("SELECT * FROM orders ORDER BY item, name")
         ).mappings().all()
 
-    aggregated = defaultdict(lambda: {"total": 0, "people": []})
+    aggregated = defaultdict(lambda: {"display": None, "total": 0, "people": []})
     for row in rows:
-        key = row["item"]
+        key = normalize(row["item"])
+        if aggregated[key]["display"] is None:
+            aggregated[key]["display"] = row["item"]
         aggregated[key]["total"] += row["quantity"]
         entry = f"{row['name']} ×{row['quantity']}"
         if row["note"]:
