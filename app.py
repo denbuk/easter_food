@@ -157,6 +157,52 @@ def edit_order(name):
     return render_template("edit_order.html", name=name, rows=rows)
 
 
+@app.route("/export")
+def export():
+    with engine.connect() as conn:
+        rows = conn.execute(
+            text("SELECT * FROM orders ORDER BY item, name")
+        ).mappings().all()
+
+    aggregated = defaultdict(lambda: {"total": 0, "people": []})
+    for row in rows:
+        key = normalize(row["item"])
+        if "display" not in aggregated[key]:
+            aggregated[key]["display"] = row["item"]
+        aggregated[key]["total"] += row["quantity"]
+        aggregated[key]["people"].append({
+            "jmeno": row["name"],
+            "mnozstvi": row["quantity"],
+            "poznamka": row["note"] or "",
+        })
+
+    data = {
+        "nakupni_seznam": [
+            {
+                "polozka": v["display"],
+                "celkem": v["total"],
+                "objednali": v["people"],
+            }
+            for v in sorted(aggregated.values(), key=lambda x: x["display"])
+        ],
+        "vsechny_objednavky": [
+            {
+                "jmeno": r["name"],
+                "polozka": r["item"],
+                "mnozstvi": r["quantity"],
+                "poznamka": r["note"] or "",
+            }
+            for r in rows
+        ],
+    }
+
+    return app.response_class(
+        response=__import__("json").dumps(data, ensure_ascii=False, indent=2),
+        mimetype="application/json",
+        headers={"Content-Disposition": "attachment; filename=velikonoce_objednavky.json"},
+    )
+
+
 @app.route("/clear", methods=["POST"])
 def clear():
     if request.form.get("pin") != ADMIN_PIN:
