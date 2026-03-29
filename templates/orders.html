@@ -8,13 +8,30 @@
     .print-title { display: block !important; }
   }
   .print-title { display: none; font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
+
+  .admin-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+  }
+  .admin-form input[type=password] {
+    width: 90px;
+    flex-shrink: 0;
+    padding: 0.45rem 0.6rem;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+  .admin-form input[type=password].error { border-color: #e84040; }
 </style>
 
 <div class="card" style="margin-bottom:1.5rem;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;gap:0.5rem;">
     <h2 style="margin:0;">Nákupní seznam 🛒</h2>
     {% if aggregated %}
-    <button onclick="window.print()" class="btn btn-sm no-print" style="background:#f0e0d0;color:#c05a1f;">🖨 Vytisknout</button>
+    <button onclick="window.print()" class="btn btn-sm no-print" style="background:#f0e0d0;color:#c05a1f;white-space:nowrap;">🖨️ Tisk</button>
     {% endif %}
   </div>
   <div class="print-title">Velikonoční nákupní seznam</div>
@@ -61,15 +78,15 @@
 {% endif %}
 
 <div class="card no-print">
-  <h2 style="color:#999;font-size:1rem;">Admin</h2>
+  <h2 style="color:#999;font-size:1rem;">⚙️ Admin</h2>
   <form method="POST" action="/clear" onsubmit="return confirm('Smazat VŠECHNY objednávky? Tuto akci nelze vrátit.');">
-    <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+    <div class="admin-form">
       <input type="password" name="pin" placeholder="PIN" maxlength="10"
-             style="width:90px;padding:0.4rem 0.6rem;border:1.5px solid {% if request.args.get('pin_error') %}#e84040{% else %}#ddd{% endif %};border-radius:8px;font-size:1rem;">
-      <button type="submit" class="btn btn-danger btn-sm">Smazat vše</button>
+             class="{% if request.args.get('pin_error') %}error{% endif %}">
+      <button type="submit" class="btn btn-danger btn-sm">🗑️ Smazat vše</button>
     </div>
     {% if request.args.get('pin_error') %}
-    <p style="color:#e84040;font-size:0.85rem;margin-top:0.4rem;">Nesprávný PIN.</p>
+    <p style="color:#e84040;font-size:0.85rem;margin-top:0.5rem;">Nesprávný PIN.</p>
     {% endif %}
   </form>
 </div>
